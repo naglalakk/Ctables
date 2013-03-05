@@ -57,46 +57,48 @@ typedef struct {
 	int capacity;
 
 }table_t;
+
 /*Extra functions*/
-void ms(int space, char symbol); /*prints space or a given symbol*/
-int return_biggest(table_t *table, int row); /*finds the biggest string in a given row*/
+
+/*prints space or a given symbol*/
+void ms(int space, char symbol);
+
+/*finds the biggest string in a given row*/
+int return_biggest(table_t *table, int row); 
+
+/*Calculates width of table cells and spacing*/
 int *calculate_width(table_t *table);
 
 /*Operations*/
+
+/*Initialize table*/
 table_t *initialze_table(int op[], int dim_i , int dim_j);
+
+/*Add to STRICT table*/
 void add(table_t *table, char *str);
+
+/*Add FREELY to table*/
 void add_freely(table_t *table, int row, int col, char *in_str);
+
+/*Given a row and column, color the string at given indec*/
 void color_me(table_t *table,int row, int col,char *color_c);
+
+/*Finds a string in table and colors it*/
 void color_string(table_t *table, char *str_find, char *color_c);
+
+/*Color all rows in a given column*/
 void color_row(table_t *table, int row, char *color_c);
+
+/*Color all columns in a given row*/
 void color_columns(table_t *table, int row, char *color_c);
+
+/*Prints out table*/
 void print(table_t *table);
+
+/*Free's allocated table*/
 void free_table(table_t *table);
 
 
-/*initialize a table, what kind it is
-
-	Op: fill in the array with your options, pass it to the struct
-
-	0. STRICT - User adds dimensions, table handles the indexing
-	   FREELY - Data is added to table and user
-		    handles indexing
-	1. Options - COLORFUL : make table sensitive to color and higlighting
-		     NOCOLOR : 	Prints B/W table
-	2. Alignment - CENTER, LEFT, RIGHT
-
-	3. ENUMERATE - Display row/column numbers along table data. Pass NONE if
-		       this is not desired...
-
-	example:
-		int options[MAX_OPS] = {STRICT, COLORFUL, CENTER, ENUMERATE};
-	--create new table
-		table_t *neu_tableu = initialize_table(options,5,5);
-			makes a colorful/enumerated new table of size 5 * 5
-		
-
-		
-*/
 void ms(int space, char symbol) {
 int i;
 
@@ -284,7 +286,6 @@ void color_me(table_t *table,int row, int col,char *color_c) {
 
 }
 
-/*Finds a string in table and colors it*/
 void color_string(table_t *table, char *str_find, char *color_c) {
 int i,j;
 	for(i = 0; i < table -> row_dimension; i++) {
@@ -296,7 +297,6 @@ int i,j;
 	}
 }
 
-/*Color all rows in a given column*/
 void color_row(table_t *table, int col, char *color_c) {
 int i;
 	for(i = 0; i < table -> row_dimension; i++) {
@@ -304,7 +304,6 @@ int i;
 	}
 }
 
-/*Color all columns in a given row*/
 void color_columns(table_t *table, int row, char *color_c) {
 int j;
 	for(j = 0; j < table -> col_dimension; j++) {
