@@ -70,3 +70,8 @@ Act freely, No colors, Center-alignment, No enumeration
 
 results:
     https://www.dropbox.com/s/t2cpdxgsk48owjz/table_2.png?m
+
+
+Future additions:
+Enable more types (accepts only strings at the moment)
+Table-export (enable export/import from/to text file)
