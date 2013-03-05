@@ -74,4 +74,5 @@ results:
 
 Future additions:
 Enable more types (accepts only strings at the moment)
+
 Table-export (enable export/import from/to text file)
