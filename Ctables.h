@@ -87,7 +87,7 @@ void color_me(table_t *table,int row, int col,char *color_c);
 void color_string(table_t *table, char *str_find, char *color_c);
 
 /*Color all rows in a given column*/
-void color_row(table_t *table, int row, char *color_c);
+void color_row(table_t *table, int col, char *color_c);
 
 /*Color all columns in a given row*/
 void color_columns(table_t *table, int row, char *color_c);
