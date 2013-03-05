@@ -1,8 +1,9 @@
 /**************************************************************
 *
-*	Ctables.h
-*
-*
+*	Ctables : Pretty table printer written in C
+*	Author  : Enkitosh
+*	git 	: http://github.com/enkitosh
+*	Date	: 04.03.2013
 **/
 
 #include <stdio.h>
