@@ -335,6 +335,11 @@ void add_freely(table_t *table, int row, int col, char *in_str) {
 		/*proceed*/
 		table -> info[row][col].str = in_str;
 		table -> info[row][col].width = strlen(in_str);
+
+			if(ALLOC) {
+				free(in_str);
+				ALLOC = FALSE;
+			}
 	}
 	
 	else {
