@@ -11,6 +11,7 @@
 #include <string.h>
 
 #define MAX_OPS 4
+#define MAX_BUF 50
 
 //Colors
 //TEXT
@@ -25,6 +26,19 @@
 #define DEFAULT "\033[39m"
 
 enum {
+/*
+0. STRICT - User adds dimensions, table handles the indexing
+   FREELY - Data is added to table and user
+            handles indexing
+1. Options - COLORFUL : make table sensitive to color and higlighting
+             NOCOLOR  :     Prints B/W table
+2. Alignment - CENTER, LEFT, RIGHT
+
+3. ENUMERATE - Display row/column numbers along table data. Pass NONE if
+               this is not desired...
+
+
+*/
 	FREELY = 2,
 	STRICT,
 	COLORFUL,
@@ -36,7 +50,16 @@ enum {
 	NONE
 };
 
+typedef enum{
+	CHAR,
+	INT,
+	
+
+}types_t;
+
 typedef enum{FALSE,TRUE}bool;
+bool ALLOC = FALSE;
+
 
 typedef struct {
 	char *str;
@@ -69,6 +92,15 @@ int return_biggest(table_t *table, int row);
 /*Calculates width of table cells and spacing*/
 int *calculate_width(table_t *table);
 
+/*Converts Int to String*/
+char *cnvrtInt(int x);
+
+/*Converts hex value to string*/
+char *cnvrtHex(int x);
+
+/*Convert Memory Address to string*/
+char *cnvrtPtr(void *ptr);
+
 /*Operations*/
 
 /*Initialize table*/
@@ -98,6 +130,38 @@ void print(table_t *table);
 /*Free's allocated table*/
 void free_table(table_t *table);
 
+char *cnvrtInt(int x) {
+
+char *in_buf = (char *)malloc(15 * sizeof(char));
+
+	sprintf(in_buf, "%d", x);
+
+		return in_buf;
+
+	bool ALLOC = TRUE;
+
+}
+
+char *cnvrtHex(int x) {
+    char *hx_buf = (char *)malloc(15 * sizeof(char));
+
+	sprintf(hx_buf, "0x%x", x);
+
+		bool ALLOC = TRUE;
+	return hx_buf;
+
+}
+
+char *cnvrtPtr(void *ptr){
+	char *ptr_buf = (char *)malloc(15 * sizeof(char));
+
+	sprintf(ptr_buf, "%p", ptr);
+
+	bool ALLOC = TRUE;
+		return ptr_buf;
+
+
+}
 
 void ms(int space, char symbol) {
 int i;
@@ -240,6 +304,13 @@ void add(table_t *table, char *in_str) {
 		printf("Error, not enough space allocated for table data!\n");
 		exit(0);
     }
+
+	if(ALLOC) {
+		free(in_str);
+		ALLOC = FALSE;
+	}
+
+
 }
 
 void edit(table_t *table, int row, int col, char *edit_str) {
