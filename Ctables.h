@@ -6,6 +6,9 @@
 *	Date	: 04.03.2013
 **/
 
+#ifndef CTABLES_H_
+#define CTABLES_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,7 +61,7 @@ typedef enum{
 }types_t;
 
 typedef enum{FALSE,TRUE}bool;
-bool ALLOC = FALSE;
+bool ALLOCAT = FALSE;
 
 
 typedef struct {
@@ -138,7 +141,7 @@ char *in_buf = (char *)malloc(15 * sizeof(char));
 
 		return in_buf;
 
-	bool ALLOC = TRUE;
+	bool ALLOCAT = TRUE;
 
 }
 
@@ -147,7 +150,7 @@ char *cnvrtHex(int x) {
 
 	sprintf(hx_buf, "0x%x", x);
 
-		bool ALLOC = TRUE;
+		bool ALLOCAT = TRUE;
 	return hx_buf;
 
 }
@@ -157,7 +160,7 @@ char *cnvrtPtr(void *ptr){
 
 	sprintf(ptr_buf, "%p", ptr);
 
-	bool ALLOC = TRUE;
+	bool ALLOCAT = TRUE;
 		return ptr_buf;
 
 
@@ -305,9 +308,9 @@ void add(table_t *table, char *in_str) {
 		exit(0);
     }
 
-	if(ALLOC) {
+	if(ALLOCAT) {
 		free(in_str);
-		ALLOC = FALSE;
+		ALLOCAT = FALSE;
 	}
 
 
@@ -336,14 +339,14 @@ void add_freely(table_t *table, int row, int col, char *in_str) {
 		table -> info[row][col].str = in_str;
 		table -> info[row][col].width = strlen(in_str);
 
-			if(ALLOC) {
+			if(ALLOCAT) {
 				free(in_str);
-				ALLOC = FALSE;
+				ALLOCAT = FALSE;
 			}
 	}
 	
 	else {
-		printf("Error, not enough space allocated for table data!\n");
+		printf("Error, not enough space allocated for table data!\n", row, col);
 		exit(0);
 	}
      }
@@ -393,6 +396,7 @@ int i,j;
 int *width_arr = calculate_width(table);
 int wide = 0;
 int check_size;
+int wall_space = 0;
 	/*Get overall table width, add together biggest
 	  strings from all rows*/
 	for(i = 0; i < table -> col_dimension; i++) {	
@@ -408,8 +412,21 @@ int check_size;
 			printf("%i", i);
 		}
 		printf("\n");
+
+		if(table -> row_dimension > 10 && table -> row_dimension < 100) {
+			wall_space = 1;
+		}
+		else if(table -> row_dimension > 100 && table -> row_dimension < 1000) {
+			wall_space = 2;
+		}
+
+		else if(table -> row_dimension > 1000 && table -> row_dimension < 10000) {
+			wall_space = 3;
+		}
 		printf(" ");
 	}
+
+	ms(wall_space, 's');
 	printf("+");
 	ms(wide,'-');
 	printf("+\n");
@@ -417,8 +434,37 @@ int check_size;
 
 	for(i = 0; i < table -> row_dimension; i++) {
 	    if(table -> options[3] == ENUMERATE) {
-			printf("%i", i);	
-		}
+		switch(wall_space) {
+		case 1:
+			if(i < 10) {
+				ms(wall_space,'s');
+			}
+			break;
+		case 2:
+			if(i < 10) {
+				ms(wall_space, 's');
+			}
+			else if(i < 100 && i >= 10) {
+				ms(wall_space-1, 's');
+		
+			}
+			break;
+		case 3:
+			if(i < 10) {
+				ms(wall_space, 's');
+			}
+			else if(i < 100 && i >= 10) {
+				ms(wall_space-1,'s');
+			}
+
+			else if(i < 1000 && i >= 100) {
+				ms(wall_space-2, 's');
+			}
+			break;
+			
+		}	
+		printf("%i", i);	
+	}
 		printf("|");
 	    for(j = 0; j < table -> col_dimension; j++) {
 		switch(table -> options[2]) {
@@ -494,7 +540,9 @@ int check_size;
 		printf("\n");
 	}
 
+
 	if(table -> options[3] == ENUMERATE) {
+		ms(wall_space,'s');	
 		printf(" ");
 	}
 	printf("+");
@@ -517,3 +565,6 @@ int i;
 		free(table);
 
 }
+
+
+#endif
