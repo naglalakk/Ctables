@@ -64,8 +64,6 @@ typedef enum{
 
 typedef enum{FALSE,TRUE}bool;
 bool ALLOCAT = FALSE;
-bool isTransparent = FALSE;
-bool isEnumerated = FALSE;
 
 
 typedef struct {
@@ -134,7 +132,7 @@ void color_columns(table_t *table, int row, char *color_c);
 /*Prints out table*/
 void print(table_t *table);
 
-void filler_p();
+void filler_p(table_t *table);
 
 /*Free's allocated table*/
 void free_table(table_t *table);
@@ -396,9 +394,9 @@ int j;
 	
 }
 
-void filler_p() {
+void filler_p(table_t *table) {
 
-	if(!isTransparent) {
+	if(table -> options[1] != TRANSPARENT) {
 		printf("|");
 	}
 		
@@ -432,9 +430,8 @@ void print(table_t *table) {
 
 /*......Should table be enumerated?............................*/
 
-	ms(1,'s');
+	//ms(1,'s');
 	if(table -> options[3] == ENUMERATE) {
-		isEnumerated = TRUE;
 		for(i = 0; i < table -> col_dimension; i++) {
 			if(table -> options[2] == LEFT) {
 				if(i == 0) {
@@ -481,11 +478,6 @@ void print(table_t *table) {
 
 	}
 
-	if(table -> options[1] != TRANSPARENT) {
-		printf(" ");
-	}
-	else {
-	}		
 
 /*------------------------------------------------------------------------------*/
     
@@ -493,15 +485,15 @@ void print(table_t *table) {
 /*......Check for transparency......................*/
 
 	if(table -> options[1] != TRANSPARENT) {
+	
+	if(table -> options[3] == ENUMERATE) 
+		printf(" ");	
+
 		ms(wall_space, 's');
 		printf("+");
 		ms(wide,'-');
 		printf("+\n");
 	}
-    
-	else {
-		isTransparent = TRUE;
-    	}
     
 /*------------------------------------------------------*/
 
@@ -511,7 +503,7 @@ void print(table_t *table) {
 
 
 	for(i = 0; i < table -> row_dimension; i++) {
-	    if(isEnumerated) {
+	    if(table -> options[3] == ENUMERATE) {
             switch(wall_space) {
                 case 1:
                     if(i < 10) {
@@ -549,14 +541,14 @@ void print(table_t *table) {
 
 /*-----------------------------------------------------------------*/
 	
-	filler_p();	
+	filler_p(table);	
 
 /*Start main printing loop.................................................................................*/
 
     for(j = 0; j < table -> col_dimension; j++) {
 		switch(table -> options[2]) {
             case LEFT:
-                if( table -> options[1] == COLORFUL || isTransparent) {
+                if( table -> options[1] == COLORFUL || table -> options[1] == TRANSPARENT) {
                     printf("%s", table -> info[i][j].color);
                     printf("%s",table -> info[i][j].str);
                     ms(table -> info[i][j].cell_width,'s');
@@ -567,11 +559,11 @@ void print(table_t *table) {
                     ms(table -> info[i][j].cell_width,'s');
                 }
                
-		filler_p(); 
+		filler_p(table); 
                 
                 break;
             case RIGHT:
-                if( table -> options[1] == COLORFUL || isTransparent) {
+                if( table -> options[1] == COLORFUL || table -> options[1] == TRANSPARENT) {
                     printf("%s", table -> info[i][j].color);
                     ms(table -> info[i][j].cell_width,'s');
                     printf("%s", table -> info[i][j].str);
@@ -584,7 +576,7 @@ void print(table_t *table) {
                     printf("%s", table -> info[i][j].str);
                 }
 
-               filler_p();
+               filler_p(table);
                 break;
             case CENTER:
                 check_size = (table -> info[i][j].cell_width +
@@ -592,7 +584,7 @@ void print(table_t *table) {
                               table ->info[i][j].cell_width);
                 if(check_size < table -> info[i][j].max_cell_w)
                 {
-                	if( table -> options[1] == COLORFUL || isTransparent) {
+                	if( table -> options[1] == COLORFUL || table -> options[1] == TRANSPARENT) {
                         printf("%s", table -> info[i][j].color);
                         ms(table -> info[i][j].cell_width,'s');
                         printf("%s", table -> info[i][j].str);
@@ -611,7 +603,7 @@ void print(table_t *table) {
                 }
                 
                 else {
-               		if( table -> options[1] == COLORFUL || isTransparent) {
+               		if( table -> options[1] == COLORFUL || table -> options[1] == TRANSPARENT) {
                     
                         printf("%s", table -> info[i][j].color);
                         ms(table -> info[i][j].cell_width,'s');
@@ -627,7 +619,7 @@ void print(table_t *table) {
                     }
                 }
                 
-                	filler_p();
+                	filler_p(table);
                		break;
                 
 	    }
@@ -638,12 +630,12 @@ void print(table_t *table) {
 /*--------------------------------------------------------------------------------------------------------*/
     
     
-	if(isEnumerated){
+	if(table -> options[3] == ENUMERATE){
 		ms(wall_space,'s');
 		printf(" ");
 	}
     
-	if(!isTransparent) {
+	if(table -> options[1] != TRANSPARENT) {
 		printf("+");
 		ms(wide,'-');
 		printf("+");
