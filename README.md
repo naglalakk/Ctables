@@ -74,8 +74,10 @@ results:
 
 
 testTrans.c 
+
 Testing Transparent table with dots:
-	results:
+
+results:
     https://www.dropbox.com/s/s1pgpq9kxxr8qwc/transparent.png
 
 Future additions:
