@@ -28,6 +28,7 @@
 #define WHITE "\033[37m"
 #define DEFAULT "\033[39m"
 
+
 enum {
 /*
 0. STRICT - User adds dimensions, table handles the indexing
@@ -45,6 +46,7 @@ enum {
 	FREELY = 2,
 	STRICT,
 	COLORFUL,
+	TRANSPARENT,
 	NOCOLOR,
 	CENTER,
 	LEFT,
@@ -62,6 +64,8 @@ typedef enum{
 
 typedef enum{FALSE,TRUE}bool;
 bool ALLOCAT = FALSE;
+bool isTransparent = FALSE;
+bool isEnumerated = FALSE;
 
 
 typedef struct {
@@ -130,6 +134,8 @@ void color_columns(table_t *table, int row, char *color_c);
 /*Prints out table*/
 void print(table_t *table);
 
+void filler_p();
+
 /*Free's allocated table*/
 void free_table(table_t *table);
 
@@ -141,7 +147,7 @@ char *in_buf = (char *)malloc(15 * sizeof(char));
 
 		return in_buf;
 
-	bool ALLOCAT = TRUE;
+	ALLOCAT = TRUE;
 
 }
 
@@ -150,7 +156,7 @@ char *cnvrtHex(int x) {
 
 	sprintf(hx_buf, "0x%x", x);
 
-		bool ALLOCAT = TRUE;
+		ALLOCAT = TRUE;
 	return hx_buf;
 
 }
@@ -160,7 +166,7 @@ char *cnvrtPtr(void *ptr){
 
 	sprintf(ptr_buf, "%p", ptr);
 
-	bool ALLOCAT = TRUE;
+	ALLOCAT = TRUE;
 		return ptr_buf;
 
 
@@ -226,7 +232,7 @@ Note: this is compared to the longest string, to make everything fit
 	added to the table in terms of formatting specs
 
 */
-	if(table -> options[2] > 6)  {
+	if(table -> options[2] > 7)  {
 	    for(i = 0; i < table -> col_dimension;i++) {
 		for(j = 0; j < table -> row_dimension; j++) {
 			if(table -> info[j][i].width < array_biggest[i]) {
@@ -258,7 +264,6 @@ Note: this is compared to the longest string, to make everything fit
 
 table_t *initialize_table(int op[], int dim_i,int dim_j) {
 int i,j;
-int mul = dim_i * dim_j;
 	table_t *new_table = (table_t *)malloc(sizeof(table_t));	    
 		new_table -> info = (table_cell **)malloc(sizeof(table_cell *) * dim_i);
 	for(i = 0; i < dim_i; i++) {
@@ -391,169 +396,269 @@ int j;
 	
 }
 
+void filler_p() {
+
+	if(!isTransparent) {
+		printf("|");
+	}
+		
+        else {
+	printf(" ");
+	}
+
+
+}
+
 void print(table_t *table) {
-int i,j;
-int *width_arr = calculate_width(table);
-int wide = 0;
-int check_size;
-int wall_space = 0;
-	/*Get overall table width, add together biggest
-	  strings from all rows*/
-	for(i = 0; i < table -> col_dimension; i++) {	
+
+/*Initialize variables.............*/
+
+    int i,j;
+    int *width_arr = calculate_width(table);
+    int wide = 0;
+    int check_size = 0;
+    int wall_space = 0;
+
+/*---------------------------------------------------*/
+
+/*Get overall table width, add together biggest
+     strings from all rows*/
+	for(i = 0; i < table -> col_dimension; i++) {
 		wide += width_arr[i] + 4;
 	}
 	/*On top of this, add */
-		wide += table -> col_dimension - 1;
+    wide += table -> col_dimension - 1;
+    
 
-	/*Should table be enumerated?*/
+/*......Should table be enumerated?............................*/
+
+	ms(1,'s');
 	if(table -> options[3] == ENUMERATE) {
+		isEnumerated = TRUE;
 		for(i = 0; i < table -> col_dimension; i++) {
-			ms(width_arr[i] + 4,'s');
+			if(table -> options[2] == LEFT) {
+				if(i == 0) {
+					ms(1,'s');
+				
+				}
+				else {
+					ms(width_arr[i] + 4,'s');
+				}
 			printf("%i", i);
-		}
-		printf("\n");
+			}
 
+			else if(table -> options[2] == RIGHT) {
+				ms(width_arr[i] + 4, 's');
+				printf("%i", i);
+
+			}
+		
+			else if(table -> options[2] == CENTER) {
+				if(i == 0) {
+					ms(width_arr[0]+2,'s');
+				}
+				else {
+				ms((width_arr[i]) + 4, 's');
+				}
+				printf("%i", i);
+
+			}
+		}
+
+
+			printf("\n");
+        
 		if(table -> row_dimension > 10 && table -> row_dimension < 100) {
 			wall_space = 1;
 		}
 		else if(table -> row_dimension > 100 && table -> row_dimension < 1000) {
 			wall_space = 2;
 		}
-
+        
 		else if(table -> row_dimension > 1000 && table -> row_dimension < 10000) {
 			wall_space = 3;
 		}
-		printf(" ");
+
 	}
 
-	ms(wall_space, 's');
-	printf("+");
-	ms(wide,'-');
-	printf("+\n");
+	if(table -> options[1] != TRANSPARENT) {
+		printf(" ");
+	}
+	else {
+	}		
+
+/*------------------------------------------------------------------------------*/
+    
+    
+/*......Check for transparency......................*/
+
+	if(table -> options[1] != TRANSPARENT) {
+		ms(wall_space, 's');
+		printf("+");
+		ms(wide,'-');
+		printf("+\n");
+	}
+    
+	else {
+		isTransparent = TRUE;
+    	}
+    
+/*------------------------------------------------------*/
+
+
+
+/*......Make proper space aligning if table is enumerated.........*/
 
 
 	for(i = 0; i < table -> row_dimension; i++) {
-	    if(table -> options[3] == ENUMERATE) {
-		switch(wall_space) {
-		case 1:
-			if(i < 10) {
-				ms(wall_space,'s');
-			}
-			break;
-		case 2:
-			if(i < 10) {
-				ms(wall_space, 's');
-			}
-			else if(i < 100 && i >= 10) {
-				ms(wall_space-1, 's');
-		
-			}
-			break;
-		case 3:
-			if(i < 10) {
-				ms(wall_space, 's');
-			}
-			else if(i < 100 && i >= 10) {
-				ms(wall_space-1,'s');
-			}
-
-			else if(i < 1000 && i >= 100) {
-				ms(wall_space-2, 's');
-			}
-			break;
-			
-		}	
-		printf("%i", i);	
-	}
-		printf("|");
-	    for(j = 0; j < table -> col_dimension; j++) {
-		switch(table -> options[2]) {
-		case LEFT:
-		if(table -> options[1] == COLORFUL) {
-			printf("%s", table -> info[i][j].color);
-			printf("%s",table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", DEFAULT);
-		}
-		else {
-			printf("%s",table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width,'s');
-		}
-			printf("|");
-			break;
-		case RIGHT:
-		if(table -> options[1] == COLORFUL) {
-			printf("%s", table -> info[i][j].color);
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-			printf("%s", DEFAULT);
-
-		}
-		else {
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-		}
-			printf("|");
-			break;
-		case CENTER:
-		check_size = (table -> info[i][j].cell_width + 
-		table -> info[i][j].width + 
-			table ->info[i][j].cell_width);
-		if(check_size < table -> info[i][j].max_cell_w) 
-		 {
-		    if(table -> options[1] == COLORFUL) {
-			printf("%s", table -> info[i][j].color);
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width + 
-			table -> info[i][j].max_cell_w - check_size,'s');
-			printf("%s", DEFAULT);
-
-		    }
-		    else {	
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width + 
-			table -> info[i][j].max_cell_w - check_size,'s');
-		    }
-		}
-		else {
-		    if(table -> options[1] == COLORFUL) {
-			printf("%s", table -> info[i][j].color);
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", DEFAULT);
-		    }
-		    else {
-			ms(table -> info[i][j].cell_width,'s');
-			printf("%s", table -> info[i][j].str);
-			ms(table -> info[i][j].cell_width,'s');
-
-		    }
-		}
-			printf("|");
-			break;
+	    if(isEnumerated) {
+            switch(wall_space) {
+                case 1:
+                    if(i < 10) {
+                        ms(wall_space,'s');
+                    }
+                    break;
+                case 2:
+                    if(i < 10) {
+                        ms(wall_space, 's');
+                    }
+                    else if(i < 100 && i >= 10) {
+                        ms(wall_space-1, 's');
+                        
+                    }
+                    break;
+                case 3:
+                    if(i < 10) {
+                        ms(wall_space, 's');
+                    }
+                    else if(i < 100 && i >= 10) {
+                        ms(wall_space-1,'s');
+                    }
+                    
+                    else if(i < 1000 && i >= 100) {
+                        ms(wall_space-2, 's');
+                    }
+                    break;
 	
-		}
-	    }
-		printf("\n");
+		default:
+			break;
+                    
+            }
+            	printf("%i", i);
 	}
 
+/*-----------------------------------------------------------------*/
+	
+	filler_p();	
 
-	if(table -> options[3] == ENUMERATE) {
-		ms(wall_space,'s');	
+/*Start main printing loop.................................................................................*/
+
+    for(j = 0; j < table -> col_dimension; j++) {
+		switch(table -> options[2]) {
+            case LEFT:
+                if( table -> options[1] == COLORFUL || isTransparent) {
+                    printf("%s", table -> info[i][j].color);
+                    printf("%s",table -> info[i][j].str);
+                    ms(table -> info[i][j].cell_width,'s');
+                    printf("%s", DEFAULT);
+                }
+                else {
+                    printf("%s",table -> info[i][j].str);
+                    ms(table -> info[i][j].cell_width,'s');
+                }
+               
+		filler_p(); 
+                
+                break;
+            case RIGHT:
+                if( table -> options[1] == COLORFUL || isTransparent) {
+                    printf("%s", table -> info[i][j].color);
+                    ms(table -> info[i][j].cell_width,'s');
+                    printf("%s", table -> info[i][j].str);
+                    printf("%s", DEFAULT);
+                    
+                }
+                
+                else {
+                    ms(table -> info[i][j].cell_width,'s');
+                    printf("%s", table -> info[i][j].str);
+                }
+
+               filler_p();
+                break;
+            case CENTER:
+                check_size = (table -> info[i][j].cell_width +
+                              table -> info[i][j].width +
+                              table ->info[i][j].cell_width);
+                if(check_size < table -> info[i][j].max_cell_w)
+                {
+                	if( table -> options[1] == COLORFUL || isTransparent) {
+                        printf("%s", table -> info[i][j].color);
+                        ms(table -> info[i][j].cell_width,'s');
+                        printf("%s", table -> info[i][j].str);
+                        ms(table -> info[i][j].cell_width +
+                           table -> info[i][j].max_cell_w - check_size,'s');
+                        printf("%s", DEFAULT);
+                        
+                    }
+                    
+                    else {
+                        ms(table -> info[i][j].cell_width,'s');
+                        printf("%s", table -> info[i][j].str);
+                        ms(table -> info[i][j].cell_width +
+                           table -> info[i][j].max_cell_w - check_size,'s');
+                    }
+                }
+                
+                else {
+               		if( table -> options[1] == COLORFUL || isTransparent) {
+                    
+                        printf("%s", table -> info[i][j].color);
+                        ms(table -> info[i][j].cell_width,'s');
+                        printf("%s", table -> info[i][j].str);
+                        ms(table -> info[i][j].cell_width,'s');
+                        printf("%s", DEFAULT);
+                   	 }
+                   	 else {
+                        ms(table -> info[i][j].cell_width,'s');
+                        printf("%s", table -> info[i][j].str);
+                        ms(table -> info[i][j].cell_width,'s');
+                        
+                    }
+                }
+                
+                	filler_p();
+               		break;
+                
+	    }
+	}
+		printf("\n");
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+    
+    
+	if(isEnumerated){
+		ms(wall_space,'s');
 		printf(" ");
 	}
-	printf("+");
-	ms(wide,'-');
-	printf("+");
-
-		printf("\n");
-
+    
+	if(!isTransparent) {
+		printf("+");
+		ms(wide,'-');
+		printf("+");
+	}
+    
+	else {
+		ms(3,'s');
+	}
+	
+    
+    printf("\n");
+    
 	/*FREE CONTAINER*/
-		free(width_arr);
-
+    free(width_arr);
+    
 }
 
 void free_table(table_t *table) {
