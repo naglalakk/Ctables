@@ -6,6 +6,7 @@ Options:
        FREELY - Data is added to table and user
                 handles indexing
     1. Options - COLORFUL : make table sensitive to color and higlighting
+    		 TRANSPARENT : make a table without any borders, color is turned on by this option as well
                  NOCOLOR  : 	Prints B/W table
     2. Alignment - CENTER, LEFT, RIGHT
 
@@ -71,6 +72,11 @@ Act freely, No colors, Center-alignment, No enumeration
 results:
     https://www.dropbox.com/s/t2cpdxgsk48owjz/table_2.png?m
 
+
+testTrans.c 
+Testing Transparent table with dots:
+	results:
+    https://www.dropbox.com/s/s1pgpq9kxxr8qwc/transparent.png
 
 Future additions:
 Enable more types (accepts only strings at the moment)
