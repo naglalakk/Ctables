@@ -452,7 +452,7 @@ void print(table_t *table) {
 		
 			else if(table -> options[2] == CENTER) {
 				if(i == 0) {
-					ms(width_arr[0]+2,'s');
+					ms(width_arr[0]+3,'s');
 				}
 				else {
 				ms((width_arr[i]) + 4, 's');
@@ -464,6 +464,11 @@ void print(table_t *table) {
 
 
 			printf("\n");
+
+		if(table -> options[3] == ENUMERATE) {
+		    if(table -> options[1] != TRANSPARENT)
+			printf(" ");
+		}
         
 		if(table -> row_dimension > 10 && table -> row_dimension < 100) {
 			wall_space = 1;
@@ -484,17 +489,15 @@ void print(table_t *table) {
     
 /*......Check for transparency......................*/
 
+	
 	if(table -> options[1] != TRANSPARENT) {
 	
-	if(table -> options[3] == ENUMERATE) 
-		printf(" ");	
-
 		ms(wall_space, 's');
 		printf("+");
 		ms(wide,'-');
 		printf("+\n");
 	}
-    
+	
 /*------------------------------------------------------*/
 
 

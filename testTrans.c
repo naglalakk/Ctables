@@ -3,7 +3,7 @@
 int main() {
 int i,j;
 int c,k;
-	int ops[MAX_OPS] = {FREELY, COLORFUL, CENTER, ENUMERATE};
+	int ops[MAX_OPS] = {FREELY, TRANSPARENT, CENTER, ENUMERATE};
 	table_t *new_table = initialize_table(ops, 10 , 10);
 
 /*make table full of dots*/
