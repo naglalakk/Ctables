@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h> /* malloc() etc. */
 #include <string.h>
-
-#include <stdbool.h> /* C defines a bool type for us */
+#include <errno.h>
+#include <err.h>
 
 #include "Ctables.h"
-
-bool            ALLOCAT = false;
 
 void
 ms(int space, int symbol)
@@ -15,6 +13,7 @@ ms(int space, int symbol)
 		printf("%c", symbol);
 }
 
+/* MAKE sure you check for NULL returning from these */
 char           *
 cnvrtInt(int x)
 {
@@ -22,8 +21,10 @@ cnvrtInt(int x)
 	char *in_buf;
 
    	in_buf = malloc(n * sizeof(*in_buf));
+	if(!in_buf)
+		return NULL;
+
 	snprintf(in_buf, sizeof(in_buf), "%d", x);
-	ALLOCAT = true;
 	return in_buf;
 }
 
@@ -34,8 +35,10 @@ cnvrtHex(int x)
 	char           *hx_buf;
 
    	hx_buf = malloc(n * sizeof(*hx_buf));
+	if(!hx_buf)
+		return NULL;
+
 	snprintf(hx_buf, sizeof(hx_buf), "0x%X", x);
-	ALLOCAT = true;
 	return hx_buf;
 }
 
@@ -46,8 +49,10 @@ cnvrtPtr(void *ptr)
 	char           *ptr_buf;
 
    	ptr_buf = malloc(n * sizeof(*ptr_buf));
+	if(!ptr_buf)
+		return NULL;
+
 	snprintf(ptr_buf, sizeof(ptr_buf), "%p", ptr);
-	ALLOCAT = true;
 	return ptr_buf;
 }
 
@@ -115,11 +120,15 @@ calculate_width(table_t * table)
 	return array_biggest;
 }
 
+/* consider using a bit array for options */
 table_t        *
 initialize_table(int op[], int dim_i, int dim_j)
 {
 	int             i, j;
-	table_t        *new_table = malloc(sizeof(table_t));
+	table_t        *new_table = malloc(sizeof(*new_table));
+
+	if(!new_table)
+		return NULL;
 
 	new_table->info = malloc(sizeof(table_cell_t *) * dim_i);
 	for (i = 0; i < dim_i; i++) {
@@ -152,12 +161,11 @@ initialize_table(int op[], int dim_i, int dim_j)
 void
 add(table_t * table, char *in_str)
 {
-	if(!in_str) {
-		printf("Error, not enough space allocated for table data!\n");
-		exit(0);
-	}
+	if(!in_str)
+		errx(1, "Error, not enough space allocated for table data!");
 
-	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
+	if (table->index_i < table->row_dimension 
+			&& table->index_j < table->col_dimension) {
 		table->info[table->index_i][table->index_j].str = in_str;
 		table->info[table->index_i][table->index_j].width = strlen(in_str);
 
@@ -168,56 +176,50 @@ add(table_t * table, char *in_str)
 		}
 	}
 
-	ALLOCAT = false;
 	free(in_str);
 }
 
 void
 edit(table_t * table, int row, int col, char *edit_str)
 {
-	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
-		table->info[row][col].str = edit_str;
-		table->info[row][col].width = strlen(edit_str);
-	} else {
+	if(!edit_str)
+		errx(1, "Error, not enough memory allocated");
+
+	if (table->index_i >= table->row_dimension && table->index_j >= table->col_dimension)
 		printf("Could not access string at index [%i] [%i] \n", row, col);
-	}
 
-
+	table->info[row][col].str = edit_str;
+	table->info[row][col].width = strlen(edit_str);
 }
 
 void
 add_freely(table_t * table, int row, int col, char *in_str)
 {
 
-	if (table->options[0] == FREELY) {
-
-		if (row < table->row_dimension && col < table->col_dimension) {
-			/* proceed */
-			table->info[row][col].str = in_str;
-			table->info[row][col].width = strlen(in_str);
-
-			if (ALLOCAT) {
-				free(in_str);
-				ALLOCAT = false;
-			}
-		} else {
-			printf("Error, not enough space allocated for table data!\n");
-			exit(0);
-		}
-	} else {
-		printf("Please optimize your table to be able to add data freely\n");
-		printf("Pass FREELY to the first index of your options array [FREELY, ... , ... ]\n");
-		exit(0);
+	if(!in_str) {
+		errx(1, "Unable to acquire enough memory from sys.");
 	}
 
+	if (table->options[0] != FREELY) {
+		fprintf(stderr, "Please optimize your table to be able to add data freely.");
+		errx(1, "Pass FREELY to the first index of your options array [FREELY, ... , ... ].");
+	}
 
+	if (row < table->row_dimension && col < table->col_dimension) {
+		/* proceed */
+		table->info[row][col].str = in_str;
+		table->info[row][col].width = strlen(in_str);
+
+		free(in_str);
+	} else
+		errx(1, "Error, not enough space allocated for table data!");
 }
 
+/* consider changing color_c to ENUM to prevent non-sensical colors */
 void
 color_me(table_t * table, int row, int col, char *color_c)
 {
 	table->info[row][col].color = color_c;
-
 }
 
 void
@@ -258,16 +260,11 @@ color_columns(table_t * table, int row, char *color_c)
 void
 filler_p(table_t * table)
 {
-
-	if (table->options[1] != TRANSPARENT) {
-		printf("|");
-	} else {
-		printf(" ");
-	}
-
-
+	printf("%c", (table->options[1] == TRANSPARENT) ? ' ' : '|');
 }
 
+/* this function is 40% of the file
+ * it HAS to be simplified */
 void
 print(table_t * table)
 {
@@ -487,11 +484,10 @@ print(table_t * table)
 	}
 
 
-	printf("\n");
+	putchar('\n');
 
 	/* FREE CONTAINER */
 	free(width_arr);
-
 }
 
 void
@@ -502,7 +498,7 @@ free_table(table_t * table)
 	for (i = 0; i < table->row_dimension; i++) {
 		free(table->info[i]);
 	}
+
 	free(table->info);
 	free(table);
-
 }
