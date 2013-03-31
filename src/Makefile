@@ -7,8 +7,8 @@ SHELL=	/bin/sh
 AR=		ar
 AROPTS=	rcs
 
-LIB=	$(.CURDIR)/lib/libctables.a
-SRC=	src/Ctables.c
+LIB=	$(.CURDIR)/../lib/libctables.a
+SRC=	Ctables.c
 OBJ=	${SRC:.c=.o}
 
 CC=		cc
@@ -24,6 +24,6 @@ $(LIB): $(OBJ)
 
 clean:
 	@echo Removing object files and archive.
-	@rm -f $(.CURDIR)/*.BAK *.o $(LIB)
+	@rm -f $(.CURDIR)/*.BAK src/*.o $(LIB)
 
 .PHONY: clean

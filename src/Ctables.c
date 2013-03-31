@@ -1,51 +1,59 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> /* malloc() etc. */
 #include <string.h>
-
-#include <stdbool.h>
+#include <errno.h>
+#include <err.h>
 
 #include "Ctables.h"
-
-bool            ALLOCAT = false;
-
-char           *
-cnvrtInt(int x)
-{
-	char           *in_buf = (char *) malloc(15 * sizeof(char));
-
-	sprintf(in_buf, "%d", x);
-
-	ALLOCAT = true;
-	return in_buf;
-}
-
-char           *
-cnvrtHex(int x)
-{
-	char           *hx_buf = (char *) malloc(15 * sizeof(char));
-
-	sprintf(hx_buf, "0x%x", x);
-
-	ALLOCAT = true;
-	return hx_buf;
-}
-
-char           *
-cnvrtPtr(void *ptr)
-{
-	char           *ptr_buf = (char *) malloc(15 * sizeof(char));
-
-	sprintf(ptr_buf, "%p", ptr);
-
-	ALLOCAT = true;
-	return ptr_buf;
-}
 
 void
 ms(int space, int symbol)
 {
 	while (space-- > 0)
 		printf("%c", symbol);
+}
+
+/* MAKE sure you check for NULL returning from these */
+char           *
+cnvrtInt(int x)
+{
+	int n = 15;
+	char *in_buf;
+
+   	in_buf = malloc(n * sizeof(*in_buf));
+	if(!in_buf)
+		return NULL;
+
+	snprintf(in_buf, sizeof(in_buf), "%d", x);
+	return in_buf;
+}
+
+char           *
+cnvrtHex(int x)
+{
+	int n = 15;
+	char           *hx_buf;
+
+   	hx_buf = malloc(n * sizeof(*hx_buf));
+	if(!hx_buf)
+		return NULL;
+
+	snprintf(hx_buf, sizeof(hx_buf), "0x%X", x);
+	return hx_buf;
+}
+
+char           *
+cnvrtPtr(void *ptr)
+{
+	int n = 15;
+	char           *ptr_buf;
+
+   	ptr_buf = malloc(n * sizeof(*ptr_buf));
+	if(!ptr_buf)
+		return NULL;
+
+	snprintf(ptr_buf, sizeof(ptr_buf), "%p", ptr);
+	return ptr_buf;
 }
 
 int
@@ -84,7 +92,7 @@ calculate_width(table_t * table)
 	int             elements = table->col_dimension;
 
 	/* make container */
-	int            *array_biggest = (int *) malloc(elements * sizeof(int));
+	int            *array_biggest = malloc(elements * sizeof(int));
 
 	/* Fill container with biggest element in each row */
 	for (i = 0; i < elements; i++)
@@ -112,15 +120,19 @@ calculate_width(table_t * table)
 	return array_biggest;
 }
 
+/* consider using a bit array for options */
 table_t        *
 initialize_table(int op[], int dim_i, int dim_j)
 {
 	int             i, j;
-	table_t        *new_table = (table_t *) malloc(sizeof(table_t));
+	table_t        *new_table = malloc(sizeof(*new_table));
 
-	new_table->info = (table_cell **) malloc(sizeof(table_cell *) * dim_i);
+	if(!new_table)
+		return NULL;
+
+	new_table->info = malloc(sizeof(table_cell_t *) * dim_i);
 	for (i = 0; i < dim_i; i++) {
-		new_table->info[i] = (table_cell *) malloc(sizeof(table_cell) * dim_j);
+		new_table->info[i] = malloc(sizeof(table_cell_t) * dim_j);
 	}
 	new_table->capacity = dim_i * dim_j;
 	new_table->row_dimension = dim_i;
@@ -149,7 +161,11 @@ initialize_table(int op[], int dim_i, int dim_j)
 void
 add(table_t * table, char *in_str)
 {
-	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
+	if(!in_str)
+		errx(1, "Error, not enough space allocated for table data!");
+
+	if (table->index_i < table->row_dimension 
+			&& table->index_j < table->col_dimension) {
 		table->info[table->index_i][table->index_j].str = in_str;
 		table->info[table->index_i][table->index_j].width = strlen(in_str);
 
@@ -158,63 +174,52 @@ add(table_t * table, char *in_str)
 			table->index_j = 0;
 			table->index_i++;
 		}
-	} else {
-		printf("Error, not enough space allocated for table data!\n");
-		exit(0);
 	}
 
-	if (ALLOCAT) {
-		free(in_str);
-		ALLOCAT = false;
-	}
+	free(in_str);
 }
 
 void
 edit(table_t * table, int row, int col, char *edit_str)
 {
-	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
-		table->info[row][col].str = edit_str;
-		table->info[row][col].width = strlen(edit_str);
-	} else {
+	if(!edit_str)
+		errx(1, "Error, not enough memory allocated");
+
+	if (table->index_i >= table->row_dimension && table->index_j >= table->col_dimension)
 		printf("Could not access string at index [%i] [%i] \n", row, col);
-	}
 
-
+	table->info[row][col].str = edit_str;
+	table->info[row][col].width = strlen(edit_str);
 }
 
 void
 add_freely(table_t * table, int row, int col, char *in_str)
 {
 
-	if (table->options[0] == FREELY) {
-
-		if (row < table->row_dimension && col < table->col_dimension) {
-			/* proceed */
-			table->info[row][col].str = in_str;
-			table->info[row][col].width = strlen(in_str);
-
-			if (ALLOCAT) {
-				free(in_str);
-				ALLOCAT = false;
-			}
-		} else {
-			printf("Error, not enough space allocated for table data!\n");
-			exit(0);
-		}
-	} else {
-		printf("Please optimize your table to be able to add data freely\n");
-		printf("Pass FREELY to the first index of your options array [FREELY, ... , ... ]\n");
-		exit(0);
+	if(!in_str) {
+		errx(1, "Unable to acquire enough memory from sys.");
 	}
 
+	if (table->options[0] != FREELY) {
+		fprintf(stderr, "Please optimize your table to be able to add data freely.");
+		errx(1, "Pass FREELY to the first index of your options array [FREELY, ... , ... ].");
+	}
 
+	if (row < table->row_dimension && col < table->col_dimension) {
+		/* proceed */
+		table->info[row][col].str = in_str;
+		table->info[row][col].width = strlen(in_str);
+
+		free(in_str);
+	} else
+		errx(1, "Error, not enough space allocated for table data!");
 }
 
+/* consider changing color_c to ENUM to prevent non-sensical colors */
 void
 color_me(table_t * table, int row, int col, char *color_c)
 {
 	table->info[row][col].color = color_c;
-
 }
 
 void
@@ -255,16 +260,11 @@ color_columns(table_t * table, int row, char *color_c)
 void
 filler_p(table_t * table)
 {
-
-	if (table->options[1] != TRANSPARENT) {
-		printf("|");
-	} else {
-		printf(" ");
-	}
-
-
+	printf("%c", (table->options[1] == TRANSPARENT) ? ' ' : '|');
 }
 
+/* this function is 40% of the file
+ * it HAS to be simplified */
 void
 print(table_t * table)
 {
@@ -292,26 +292,26 @@ print(table_t * table)
 
 	/* ......Should table be enumerated?............................ */
 
-	//ms(1, 's');
+	//ms(1, ' ');
 	if (table->options[3] == ENUMERATE) {
 		for (i = 0; i < table->col_dimension; i++) {
 			if (table->options[2] == LEFT) {
 				if (i == 0) {
-					ms(1, 's');
+					ms(1, ' ');
 
 				} else {
-					ms(width_arr[i] + 4, 's');
+					ms(width_arr[i] + 4, ' ');
 				}
 				printf("%i", i);
 			} else if (table->options[2] == RIGHT) {
-				ms(width_arr[i] + 4, 's');
+				ms(width_arr[i] + 4, ' ');
 				printf("%i", i);
 
 			} else if (table->options[2] == CENTER) {
 				if (i == 0) {
-					ms(width_arr[0] + 3, 's');
+					ms(width_arr[0] + 3, ' ');
 				} else {
-					ms((width_arr[i]) + 4, 's');
+					ms((width_arr[i]) + 4, ' ');
 				}
 				printf("%i", i);
 
@@ -341,7 +341,7 @@ print(table_t * table)
 
 	if (table->options[1] != TRANSPARENT) {
 
-		ms(wall_space, 's');
+		ms(wall_space, ' ');
 		printf("+");
 		ms(wide, '-');
 		printf("+\n");
@@ -358,24 +358,24 @@ print(table_t * table)
 			switch (wall_space) {
 			case 1:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				}
 				break;
 			case 2:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				} else if (i < 100 && i >= 10) {
-					ms(wall_space - 1, 's');
+					ms(wall_space - 1, ' ');
 
 				}
 				break;
 			case 3:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				} else if (i < 100 && i >= 10) {
-					ms(wall_space - 1, 's');
+					ms(wall_space - 1, ' ');
 				} else if (i < 1000 && i >= 100) {
-					ms(wall_space - 2, 's');
+					ms(wall_space - 2, ' ');
 				}
 				break;
 
@@ -401,11 +401,11 @@ print(table_t * table)
 				if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 					printf("%s", table->info[i][j].color);
 					printf("%s", table->info[i][j].str);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", DEFAULT);
 				} else {
 					printf("%s", table->info[i][j].str);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 				}
 
 				filler_p(table);
@@ -414,12 +414,12 @@ print(table_t * table)
 			case RIGHT:
 				if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 					printf("%s", table->info[i][j].color);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", table->info[i][j].str);
 					printf("%s", DEFAULT);
 
 				} else {
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", table->info[i][j].str);
 				}
 
@@ -432,30 +432,30 @@ print(table_t * table)
 				if (check_size < table->info[i][j].max_cell_w) {
 					if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 						printf("%s", table->info[i][j].color);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
 						ms(table->info[i][j].cell_width +
-						   table->info[i][j].max_cell_w - check_size, 's');
+						   table->info[i][j].max_cell_w - check_size, ' ');
 						printf("%s", DEFAULT);
 
 					} else {
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
 						ms(table->info[i][j].cell_width +
-						   table->info[i][j].max_cell_w - check_size, 's');
+						   table->info[i][j].max_cell_w - check_size, ' ');
 					}
 				} else {
 					if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 
 						printf("%s", table->info[i][j].color);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", DEFAULT);
 					} else {
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 
 					}
 				}
@@ -472,7 +472,7 @@ print(table_t * table)
 
 
 	if (table->options[3] == ENUMERATE) {
-		ms(wall_space, 's');
+		ms(wall_space, ' ');
 		printf(" ");
 	}
 	if (table->options[1] != TRANSPARENT) {
@@ -480,15 +480,14 @@ print(table_t * table)
 		ms(wide, '-');
 		printf("+");
 	} else {
-		ms(3, 's');
+		ms(3, ' ');
 	}
 
 
-	printf("\n");
+	putchar('\n');
 
 	/* FREE CONTAINER */
 	free(width_arr);
-
 }
 
 void
@@ -499,7 +498,7 @@ free_table(table_t * table)
 	for (i = 0; i < table->row_dimension; i++) {
 		free(table->info[i]);
 	}
+
 	free(table->info);
 	free(table);
-
 }

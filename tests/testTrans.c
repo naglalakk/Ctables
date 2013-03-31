@@ -3,7 +3,7 @@
 int
 main(void)
 {
-	int             i, j;
+	int				c, k;
 	int             ops[MAX_OPS] = {FREELY, TRANSPARENT, CENTER, ENUMERATE};
 	table_t        *new_table = initialize_table(ops, 10, 10);
 
