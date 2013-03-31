@@ -2,30 +2,27 @@
 
 SHELL=		/bin/sh
 
-INCDIR=		$(.CURDIR)/../include
+INCDIR=		$(.CURDIR)/../src/
 
-CC=			cc
+CC=			gcc
 CFLAGS=		-g -Wall -O2 -I$(INCDIR)
-LDFLAGS=	-L$(.CURDIR)/../lib/
-LIBS=		$(.CURDIR)/../lib/libctables.a
+LDFLAGS=	-L$(.CURDIR)/../lib
+LIBS=		-lctables
 
 .SUFFIXES: .c.o
 
 all: main testEx testTrans
 
-main: main.o
-	$(CC) -o $@ $(LDFLAGS) $(LIBS) main.o
+main: main.c
+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $(LIBS)
 
-testEx: testEx.o
-	$(CC) -o $@ $(LDFLAGS) $(LIBS) testEx.o
+testEx: testEx.c
+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $(LIBS)
 
-testTrans: testTrans.o
-	$(CC) -o $@ $(LDFLAGS) $(LIBS) testTrans.o
-
-.c.o:
-	$(CC) -c -o $@ $< $(CFLAGS)
+testTrans: testTrans.c
+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 clean:
-	@rm -f $(.CURDIR)/*.BAK *.o $(PROG)
+	@rm -f $(.CURDIR)/*.BAK main testEx testTrans *.o
 
 .PHONY: clean
