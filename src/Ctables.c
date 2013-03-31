@@ -41,16 +41,16 @@ cnvrtPtr(void *ptr)
 	return ptr_buf;
 }
 
-void 
+void
 ms(int space, char symbol)
 {
 	int             i;
 
-	for(i = 0; i < space; i++)
+	for (i = 0; i < space; i++)
 		(symbol == 's') ? printf(" ") : printf("%c", symbol);
 }
 
-int 
+int
 return_biggest(table_t * table, int row)
 {
 	int             i, biggest;
@@ -62,59 +62,52 @@ return_biggest(table_t * table, int row)
 
 	return biggest;
 }
+/*
+        LEFT: Has no space at the beginning, 4 columns at the end
+                |example    |
+        RIGHT:
+              4 columns at the beginning
+                |    example|
+        CENTER:
+                2 columns at beginning, 2 at the end
+                |  example  |
 
+Note: this is compared to the longest string, to make everything fit
+        we have to calculate each space needed for each smaller string
+        added to the table in terms of formatting specs
+
+*/
 int            *
 calculate_width(table_t * table)
 {
 	int             i, j;
+
 	/* Nr of elements to calculate */
 	int             elements = table->col_dimension;
+
 	/* make container */
 	int            *array_biggest = (int *) malloc(elements * sizeof(int));
 
 	/* Fill container with biggest element in each row */
-	for (i = 0; i < elements; i++) {
+	for (i = 0; i < elements; i++)
 		array_biggest[i] = return_biggest(table, i);
-	}
 
-	/*
-		LEFT: Has no space at the beginning, 4 columns at the end
-			|example    |
-		RIGHT:
-		      4 columns at the beginning
-			|    example|
-		CENTER:
-			2 columns at beginning, 2 at the end
-			|  example  |
-	
-	Note: this is compared to the longest string, to make everything fit
-		we have to calculate each space needed for each smaller string
-		added to the table in terms of formatting specs
-	
-	*/
-	if (table->options[2] > 7) {
-		for (i = 0; i < table->col_dimension; i++) {
-			for (j = 0; j < table->row_dimension; j++) {
-				if (table->info[j][i].width < array_biggest[i]) {
+	for (i = 0; i < table->col_dimension; i++)
+		for (j = 0; j < table->row_dimension; j++)
+
+			if (table->options[2] > 7) {
+				if (table->info[j][i].width < array_biggest[i])
 					table->info[j][i].cell_width = ((array_biggest[i] + 4) - table->info[j][i].width);
-				} else {
+				else
 					table->info[j][i].cell_width = 4;
-				}
 				table->info[j][i].max_cell_w = array_biggest[i] + 4;
-			}
-		}
-	} else {
-		for (i = 0; i < table->col_dimension; i++) {
-			for (j = 0; j < table->row_dimension; j++) {
-				if (table->info[j][i].width < array_biggest[i]) {
+			} else {
+				if (table->info[j][i].width < array_biggest[i])
 					table->info[j][i].cell_width = ((array_biggest[i] + 4) - table->info[j][i].width) / 2;
-				} else {
+				else
 					table->info[j][i].cell_width = 2;
-				}
 				table->info[j][i].max_cell_w = array_biggest[i] + 4;
 			}
-		}
-	}
 
 	return array_biggest;
 }
@@ -124,6 +117,7 @@ initialize_table(int op[], int dim_i, int dim_j)
 {
 	int             i, j;
 	table_t        *new_table = (table_t *) malloc(sizeof(table_t));
+
 	new_table->info = (table_cell **) malloc(sizeof(table_cell *) * dim_i);
 	for (i = 0; i < dim_i; i++) {
 		new_table->info[i] = (table_cell *) malloc(sizeof(table_cell) * dim_j);
@@ -152,7 +146,7 @@ initialize_table(int op[], int dim_i, int dim_j)
 }
 
 
-void 
+void
 add(table_t * table, char *in_str)
 {
 	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
@@ -175,7 +169,7 @@ add(table_t * table, char *in_str)
 	}
 }
 
-void 
+void
 edit(table_t * table, int row, int col, char *edit_str)
 {
 	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
@@ -188,7 +182,7 @@ edit(table_t * table, int row, int col, char *edit_str)
 
 }
 
-void 
+void
 add_freely(table_t * table, int row, int col, char *in_str)
 {
 
@@ -216,17 +210,18 @@ add_freely(table_t * table, int row, int col, char *in_str)
 
 }
 
-void 
+void
 color_me(table_t * table, int row, int col, char *color_c)
 {
 	table->info[row][col].color = color_c;
 
 }
 
-void 
+void
 color_string(table_t * table, char *str_find, char *color_c)
 {
 	int             i, j;
+
 	for (i = 0; i < table->row_dimension; i++) {
 		for (j = 0; j < table->col_dimension; j++) {
 			if (strcmp(table->info[i][j].str, str_find) == 0) {
@@ -236,26 +231,28 @@ color_string(table_t * table, char *str_find, char *color_c)
 	}
 }
 
-void 
+void
 color_row(table_t * table, int col, char *color_c)
 {
 	int             i;
+
 	for (i = 0; i < table->row_dimension; i++) {
 		table->info[i][col].color = color_c;
 	}
 }
 
-void 
+void
 color_columns(table_t * table, int row, char *color_c)
 {
 	int             j;
+
 	for (j = 0; j < table->col_dimension; j++) {
 		table->info[row][j].color = color_c;
 	}
 
 }
 
-void 
+void
 filler_p(table_t * table)
 {
 
@@ -268,7 +265,7 @@ filler_p(table_t * table)
 
 }
 
-void 
+void
 print(table_t * table)
 {
 
@@ -283,9 +280,9 @@ print(table_t * table)
 	/*---------------------------------------------------*/
 
 	/*
-	 * Get overall table width, add together biggest strings from all
-	 * rows
-	 */
+         * Get overall table width, add together biggest strings from all
+         * rows
+         */
 	for (i = 0; i < table->col_dimension; i++) {
 		wide += width_arr[i] + 4;
 	}
@@ -494,10 +491,11 @@ print(table_t * table)
 
 }
 
-void 
+void
 free_table(table_t * table)
 {
 	int             i;
+
 	for (i = 0; i < table->row_dimension; i++) {
 		free(table->info[i]);
 	}

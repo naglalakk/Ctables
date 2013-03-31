@@ -1,6 +1,19 @@
 Ctables, a table printing library written in C.
+===============================================
 
-Options:
+Building
+--------
+
+ * cd Ctables
+
+ * make clean && make
+
+The library will be created in the lib/ directory, and all the src/object files
+will be in src/.
+
+
+Options
+-------
 
     0. STRICT - User adds dimensions, table handles the indexing
        FREELY - Data is added to table and user
