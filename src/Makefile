@@ -7,8 +7,8 @@ SHELL=	/bin/sh
 AR=		ar
 AROPTS=	rcs
 
-LIB=	$(.CURDIR)/lib/libctables.a
-SRC=	src/Ctables.c
+LIB=	$(.CURDIR)/../lib/libctables.a
+SRC=	Ctables.c
 OBJ=	${SRC:.c=.o}
 
 CC=		cc

@@ -54,7 +54,7 @@ typedef struct table_cell_s {
     int       width;
     int       cell_width;
     int       max_cell_w;
-}         table_cell;
+}         table_cell_t;
 
 typedef struct table_s {
     int       row_dimension;
@@ -62,7 +62,7 @@ typedef struct table_s {
     int       index_i;
     int       index_j;
     int       options[MAX_OPS];
-    table_cell **info;
+    table_cell_t **info;
     int       capacity;
 }         table_t;
 

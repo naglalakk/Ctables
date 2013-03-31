@@ -118,9 +118,9 @@ initialize_table(int op[], int dim_i, int dim_j)
 	int             i, j;
 	table_t        *new_table = (table_t *) malloc(sizeof(table_t));
 
-	new_table->info = (table_cell **) malloc(sizeof(table_cell *) * dim_i);
+	new_table->info = (table_cell_t **) malloc(sizeof(table_cell_t *) * dim_i);
 	for (i = 0; i < dim_i; i++) {
-		new_table->info[i] = (table_cell *) malloc(sizeof(table_cell) * dim_j);
+		new_table->info[i] = (table_cell_t *) malloc(sizeof(table_cell_t) * dim_j);
 	}
 	new_table->capacity = dim_i * dim_j;
 	new_table->row_dimension = dim_i;
