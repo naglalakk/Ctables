@@ -2,12 +2,8 @@
 src/*.o
 
 # Libraries
-lib/*.lib
-lib/*.a
-
-# Shared objects
-lib/*.so
-lib/*.so.*
+!lib/.gitignore
+lib/*
 
 # Executables
 tests/obj/*.o
