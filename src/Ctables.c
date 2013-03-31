@@ -292,26 +292,26 @@ print(table_t * table)
 
 	/* ......Should table be enumerated?............................ */
 
-	//ms(1, 's');
+	//ms(1, ' ');
 	if (table->options[3] == ENUMERATE) {
 		for (i = 0; i < table->col_dimension; i++) {
 			if (table->options[2] == LEFT) {
 				if (i == 0) {
-					ms(1, 's');
+					ms(1, ' ');
 
 				} else {
-					ms(width_arr[i] + 4, 's');
+					ms(width_arr[i] + 4, ' ');
 				}
 				printf("%i", i);
 			} else if (table->options[2] == RIGHT) {
-				ms(width_arr[i] + 4, 's');
+				ms(width_arr[i] + 4, ' ');
 				printf("%i", i);
 
 			} else if (table->options[2] == CENTER) {
 				if (i == 0) {
-					ms(width_arr[0] + 3, 's');
+					ms(width_arr[0] + 3, ' ');
 				} else {
-					ms((width_arr[i]) + 4, 's');
+					ms((width_arr[i]) + 4, ' ');
 				}
 				printf("%i", i);
 
@@ -341,7 +341,7 @@ print(table_t * table)
 
 	if (table->options[1] != TRANSPARENT) {
 
-		ms(wall_space, 's');
+		ms(wall_space, ' ');
 		printf("+");
 		ms(wide, '-');
 		printf("+\n");
@@ -358,24 +358,24 @@ print(table_t * table)
 			switch (wall_space) {
 			case 1:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				}
 				break;
 			case 2:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				} else if (i < 100 && i >= 10) {
-					ms(wall_space - 1, 's');
+					ms(wall_space - 1, ' ');
 
 				}
 				break;
 			case 3:
 				if (i < 10) {
-					ms(wall_space, 's');
+					ms(wall_space, ' ');
 				} else if (i < 100 && i >= 10) {
-					ms(wall_space - 1, 's');
+					ms(wall_space - 1, ' ');
 				} else if (i < 1000 && i >= 100) {
-					ms(wall_space - 2, 's');
+					ms(wall_space - 2, ' ');
 				}
 				break;
 
@@ -401,11 +401,11 @@ print(table_t * table)
 				if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 					printf("%s", table->info[i][j].color);
 					printf("%s", table->info[i][j].str);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", DEFAULT);
 				} else {
 					printf("%s", table->info[i][j].str);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 				}
 
 				filler_p(table);
@@ -414,12 +414,12 @@ print(table_t * table)
 			case RIGHT:
 				if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 					printf("%s", table->info[i][j].color);
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", table->info[i][j].str);
 					printf("%s", DEFAULT);
 
 				} else {
-					ms(table->info[i][j].cell_width, 's');
+					ms(table->info[i][j].cell_width, ' ');
 					printf("%s", table->info[i][j].str);
 				}
 
@@ -432,30 +432,30 @@ print(table_t * table)
 				if (check_size < table->info[i][j].max_cell_w) {
 					if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 						printf("%s", table->info[i][j].color);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
 						ms(table->info[i][j].cell_width +
-						   table->info[i][j].max_cell_w - check_size, 's');
+						   table->info[i][j].max_cell_w - check_size, ' ');
 						printf("%s", DEFAULT);
 
 					} else {
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
 						ms(table->info[i][j].cell_width +
-						   table->info[i][j].max_cell_w - check_size, 's');
+						   table->info[i][j].max_cell_w - check_size, ' ');
 					}
 				} else {
 					if (table->options[1] == COLORFUL || table->options[1] == TRANSPARENT) {
 
 						printf("%s", table->info[i][j].color);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", DEFAULT);
 					} else {
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 						printf("%s", table->info[i][j].str);
-						ms(table->info[i][j].cell_width, 's');
+						ms(table->info[i][j].cell_width, ' ');
 
 					}
 				}
@@ -472,7 +472,7 @@ print(table_t * table)
 
 
 	if (table->options[3] == ENUMERATE) {
-		ms(wall_space, 's');
+		ms(wall_space, ' ');
 		printf(" ");
 	}
 	if (table->options[1] != TRANSPARENT) {
@@ -480,7 +480,7 @@ print(table_t * table)
 		ms(wide, '-');
 		printf("+");
 	} else {
-		ms(3, 's');
+		ms(3, ' ');
 	}
 
 

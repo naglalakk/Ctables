@@ -22,7 +22,6 @@
 #define WHITE "\033[37m"
 #define DEFAULT "\033[39m"
 
-enum {
 /*
  * 0. STRICT - User adds dimensions, table handles the indexing
  *    FREELY - Data is added to table and user
@@ -36,6 +35,7 @@ enum {
  *    along table data. Pass NONE if
  *    this is not desired...
  */
+enum {
     FREELY = 2,
     STRICT,
     COLORFUL,

@@ -24,6 +24,6 @@ $(LIB): $(OBJ)
 
 clean:
 	@echo Removing object files and archive.
-	@rm -f $(.CURDIR)/*.BAK *.o $(LIB)
+	@rm -f $(.CURDIR)/*.BAK src/*.o $(LIB)
 
 .PHONY: clean
