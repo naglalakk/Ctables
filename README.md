@@ -4,13 +4,14 @@ Ctables, a table printing library written in C.
 Building
 --------
 
+ * git clone git://github.com/enkitosh/Ctables.git
+
  * cd Ctables
 
  * make clean && make
 
-The library will be created in the lib/ directory, and all the src/object files
-will be in src/.
-
+The library will be created in the lib/ directory, and all the source/object
+files will be in src/.
 
 Options
 -------
@@ -27,7 +28,8 @@ Options
                    this is not desired...
 
 
-EXAMPLE 1:
+EXAMPLE
+-------
 
     int ops[MAX_OPS] = {STRICT, COLORFUL, RIGHT, ENUMERATE};
 
@@ -58,7 +60,9 @@ EXAMPLE 1:
 results:
     https://www.dropbox.com/s/hk4qevq3jksa7vq/table_1.png?m
 
-EXAMPLE 2:
+EXAMPLE
+-------
+
 Act freely, No colors, Center-alignment, No enumeration
 
         int ops_2[MAX_OPS] = {FREELY, NOCOLOR, CENTER, NONE};
@@ -93,7 +97,9 @@ Testing Transparent table with dots:
 results:
     https://www.dropbox.com/s/s1pgpq9kxxr8qwc/transparent.png
 
-Future additions:
+Future additions
+----------------
+
 Enable more types (accepts only strings at the moment)
 
-Table-export (enable export/import from/to text file)
+Table-export (enable export to text file)

@@ -66,27 +66,21 @@ typedef struct table_s {
     int       capacity;
 }         table_t;
 
-/* prints space or a given symbol */
-void      ms(int space, char symbol);
-
+/* prints given symbol */
+void      ms(int space, int symbol);
 /* finds the biggest string in a given row */
 int       return_biggest(table_t * table, int row);
-
 /* Calculates width of table cells and spacing */
 int      *calculate_width(table_t * table);
-
 /* Converts Int to String */
 char     *cnvrtInt(int x);
-
 /* Converts hex value to string */
 char     *cnvrtHex(int x);
-
 /* Convert Memory Address to string */
 char     *cnvrtPtr(void *ptr);
 
 /* Operations */
-
-table_t  *initialze_table(int op[], int dim_i, int dim_j);
+table_t  *initialize_table(int op[], int dim_i, int dim_j);
 
 /* Add to STRICT table */
 void      add(table_t * table, char *str);

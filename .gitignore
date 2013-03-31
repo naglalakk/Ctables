@@ -1,0 +1,15 @@
+# Object files
+src/*.o
+
+# Libraries
+lib/*.lib
+lib/*.a
+
+# Shared objects
+lib/*.so
+lib/*.so.*
+
+# Executables
+tests/obj/*.o
+*.out
+*.app

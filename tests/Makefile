@@ -3,15 +3,13 @@
 SHELL=		/bin/sh
 
 INCDIR=		$(.CURDIR)/../include
-DEPS=		$(INCDIR)/Ctables.h
 
 CC=			cc
-CFLAGS=		-I$(INCDIR) -O0 -std=c99 -g -Wall -Werror -pedantic
+CFLAGS=		-g -Wall -O2 -I$(INCDIR)
 LDFLAGS=	-L$(.CURDIR)/../lib/
-LIBS=		-lctables
+LIBS=		$(.CURDIR)/../lib/libctables.a
 
 .SUFFIXES: .c.o
-.PHONY: clean
 
 all: main testEx testTrans
 
@@ -24,8 +22,10 @@ testEx: testEx.o
 testTrans: testTrans.o
 	$(CC) -o $@ $(LDFLAGS) $(LIBS) testTrans.o
 
-.c.o: $(DEPS)
+.c.o:
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:
 	@rm -f $(.CURDIR)/*.BAK *.o $(PROG)
+
+.PHONY: clean

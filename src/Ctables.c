@@ -42,12 +42,10 @@ cnvrtPtr(void *ptr)
 }
 
 void
-ms(int space, char symbol)
+ms(int space, int symbol)
 {
-	int             i;
-
-	for (i = 0; i < space; i++)
-		(symbol == 's') ? printf(" ") : printf("%c", symbol);
+	while (space-- > 0)
+		printf("%c", symbol);
 }
 
 int
@@ -62,21 +60,21 @@ return_biggest(table_t * table, int row)
 
 	return biggest;
 }
-/*
-        LEFT: Has no space at the beginning, 4 columns at the end
-                |example    |
-        RIGHT:
-              4 columns at the beginning
-                |    example|
-        CENTER:
-                2 columns at beginning, 2 at the end
-                |  example  |
 
-Note: this is compared to the longest string, to make everything fit
-        we have to calculate each space needed for each smaller string
-        added to the table in terms of formatting specs
+/*		LEFT: Has no space at the beginning, 4 columns at the end
+ *               |example    |
+ *      RIGHT:
+ *             4 columns at the beginning
+ *               |    example|
+ *      CENTER:
+ *               2 columns at beginning, 2 at the end
+ *               |  example  |
+ *
+ *		Note: this is compared to the longest string, to make everything fit
+ *      we have to calculate each space needed for each smaller string
+ *      added to the table in terms of formatting specs
+ */
 
-*/
 int            *
 calculate_width(table_t * table)
 {
@@ -92,8 +90,8 @@ calculate_width(table_t * table)
 	for (i = 0; i < elements; i++)
 		array_biggest[i] = return_biggest(table, i);
 
-	for (i = 0; i < table->col_dimension; i++)
-		for (j = 0; j < table->row_dimension; j++)
+	for (i = 0; i < table->col_dimension; i++) {
+		for (j = 0; j < table->row_dimension; j++) {
 
 			if (table->options[2] > 7) {
 				if (table->info[j][i].width < array_biggest[i])
@@ -108,6 +106,8 @@ calculate_width(table_t * table)
 					table->info[j][i].cell_width = 2;
 				table->info[j][i].max_cell_w = array_biggest[i] + 4;
 			}
+		}
+	}
 
 	return array_biggest;
 }
