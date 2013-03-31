@@ -6,7 +6,7 @@ Building
 
  * git clone git://github.com/enkitosh/Ctables.git
 
- * cd Ctables
+ * cd Ctables/src
 
  * make clean && make
 
