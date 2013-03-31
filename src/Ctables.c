@@ -18,10 +18,11 @@ ms(int space, int symbol)
 char           *
 cnvrtInt(int x)
 {
-	char           *in_buf = malloc(15 * sizeof(char));
+	int n = 15;
+	char *in_buf;
 
+   	in_buf = malloc(n * sizeof(*in_buf));
 	snprintf(in_buf, sizeof(in_buf), "%d", x);
-
 	ALLOCAT = true;
 	return in_buf;
 }
@@ -29,10 +30,11 @@ cnvrtInt(int x)
 char           *
 cnvrtHex(int x)
 {
-	char           *hx_buf = malloc(15 * sizeof(char));
+	int n = 15;
+	char           *hx_buf;
 
+   	hx_buf = malloc(n * sizeof(*hx_buf));
 	snprintf(hx_buf, sizeof(hx_buf), "0x%X", x);
-
 	ALLOCAT = true;
 	return hx_buf;
 }
@@ -40,10 +42,11 @@ cnvrtHex(int x)
 char           *
 cnvrtPtr(void *ptr)
 {
-	char           *ptr_buf = malloc(15 * sizeof(char));
+	int n = 15;
+	char           *ptr_buf;
 
+   	ptr_buf = malloc(n * sizeof(*ptr_buf));
 	snprintf(ptr_buf, sizeof(ptr_buf), "%p", ptr);
-
 	ALLOCAT = true;
 	return ptr_buf;
 }
@@ -149,6 +152,11 @@ initialize_table(int op[], int dim_i, int dim_j)
 void
 add(table_t * table, char *in_str)
 {
+	if(!in_str) {
+		printf("Error, not enough space allocated for table data!\n");
+		exit(0);
+	}
+
 	if (table->index_i < table->row_dimension && table->index_j < table->col_dimension) {
 		table->info[table->index_i][table->index_j].str = in_str;
 		table->info[table->index_i][table->index_j].width = strlen(in_str);
@@ -158,15 +166,10 @@ add(table_t * table, char *in_str)
 			table->index_j = 0;
 			table->index_i++;
 		}
-	} else {
-		printf("Error, not enough space allocated for table data!\n");
-		exit(0);
 	}
 
-	if (ALLOCAT) {
-		free(in_str);
-		ALLOCAT = false;
-	}
+	ALLOCAT = false;
+	free(in_str);
 }
 
 void
