@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> /* malloc() etc. */
 #include <string.h>
 
-#include <stdbool.h>
+#include <stdbool.h> /* C defines a bool type for us */
 
 #include "Ctables.h"
 
@@ -18,7 +18,7 @@ ms(int space, int symbol)
 char           *
 cnvrtInt(int x)
 {
-	char           *in_buf = (char *) malloc(15 * sizeof(char));
+	char           *in_buf = malloc(15 * sizeof(char));
 
 	snprintf(in_buf, sizeof(in_buf), "%d", x);
 
@@ -29,7 +29,7 @@ cnvrtInt(int x)
 char           *
 cnvrtHex(int x)
 {
-	char           *hx_buf = (char *) malloc(15 * sizeof(char));
+	char           *hx_buf = malloc(15 * sizeof(char));
 
 	snprintf(hx_buf, sizeof(hx_buf), "0x%X", x);
 
@@ -40,7 +40,7 @@ cnvrtHex(int x)
 char           *
 cnvrtPtr(void *ptr)
 {
-	char           *ptr_buf = (char *) malloc(15 * sizeof(char));
+	char           *ptr_buf = malloc(15 * sizeof(char));
 
 	snprintf(ptr_buf, sizeof(ptr_buf), "%p", ptr);
 
@@ -84,7 +84,7 @@ calculate_width(table_t * table)
 	int             elements = table->col_dimension;
 
 	/* make container */
-	int            *array_biggest = (int *) malloc(elements * sizeof(int));
+	int            *array_biggest = malloc(elements * sizeof(int));
 
 	/* Fill container with biggest element in each row */
 	for (i = 0; i < elements; i++)
@@ -116,11 +116,11 @@ table_t        *
 initialize_table(int op[], int dim_i, int dim_j)
 {
 	int             i, j;
-	table_t        *new_table = (table_t *) malloc(sizeof(table_t));
+	table_t        *new_table = malloc(sizeof(table_t));
 
-	new_table->info = (table_cell_t **) malloc(sizeof(table_cell_t *) * dim_i);
+	new_table->info = malloc(sizeof(table_cell_t *) * dim_i);
 	for (i = 0; i < dim_i; i++) {
-		new_table->info[i] = (table_cell_t *) malloc(sizeof(table_cell_t) * dim_j);
+		new_table->info[i] = malloc(sizeof(table_cell_t) * dim_j);
 	}
 	new_table->capacity = dim_i * dim_j;
 	new_table->row_dimension = dim_i;
