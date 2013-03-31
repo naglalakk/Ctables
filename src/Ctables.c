@@ -8,12 +8,19 @@
 
 bool            ALLOCAT = false;
 
+void
+ms(int space, int symbol)
+{
+	while (space-- > 0)
+		printf("%c", symbol);
+}
+
 char           *
 cnvrtInt(int x)
 {
 	char           *in_buf = (char *) malloc(15 * sizeof(char));
 
-	sprintf(in_buf, "%d", x);
+	snprintf(in_buf, sizeof(in_buf), "%d", x);
 
 	ALLOCAT = true;
 	return in_buf;
@@ -24,7 +31,7 @@ cnvrtHex(int x)
 {
 	char           *hx_buf = (char *) malloc(15 * sizeof(char));
 
-	sprintf(hx_buf, "0x%x", x);
+	snprintf(hx_buf, sizeof(hx_buf), "0x%X", x);
 
 	ALLOCAT = true;
 	return hx_buf;
@@ -35,17 +42,10 @@ cnvrtPtr(void *ptr)
 {
 	char           *ptr_buf = (char *) malloc(15 * sizeof(char));
 
-	sprintf(ptr_buf, "%p", ptr);
+	snprintf(ptr_buf, sizeof(ptr_buf), "%p", ptr);
 
 	ALLOCAT = true;
 	return ptr_buf;
-}
-
-void
-ms(int space, int symbol)
-{
-	while (space-- > 0)
-		printf("%c", symbol);
 }
 
 int
