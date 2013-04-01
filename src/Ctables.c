@@ -176,7 +176,12 @@ add(table_t * table, char *in_str)
 		}
 	}
 
-	//free(in_str);
+	/*
+	* I'm getting rid of this,
+	* user will have to handle memory himself
+	* if he's using the convertion methods
+	*/
+		//free(in_str);
 }
 
 void
