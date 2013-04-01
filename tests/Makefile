@@ -2,7 +2,7 @@
 
 SHELL=		/bin/sh
 
-INCDIR=		$(.CURDIR)/../src
+INCDIR=		$(.CURDIR)/../src/
 
 CC=			gcc
 CFLAGS=		-g -Wall -O2 -I$(INCDIR)
