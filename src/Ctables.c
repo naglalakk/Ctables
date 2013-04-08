@@ -335,7 +335,8 @@ print(table_t * table)
 
 
 		printf("\n");
-		printf(" ");
+		if(!isTransparent)
+			printf(" ");
 
 		if (table->row_dimension > 10 && table->row_dimension < 100) {
 			wall_space = 1;
