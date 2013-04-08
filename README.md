@@ -58,7 +58,7 @@ EXAMPLE
 
         
 results:
-    https://www.dropbox.com/s/hk4qevq3jksa7vq/table_1.png?m
+    https://www.dropbox.com/s/kxlck2dpe5pwiu8/Enumerated.png
 
 EXAMPLE
 -------
@@ -87,7 +87,7 @@ Act freely, No colors, Center-alignment, No enumeration
             free_table(neu_tableu);
 
 results:
-    https://www.dropbox.com/s/t2cpdxgsk48owjz/table_2.png?m
+    https://www.dropbox.com/s/wnk17pfykhnzqnn/Centered.png
 
 
 testTrans.c 
@@ -95,7 +95,7 @@ testTrans.c
 Testing Transparent table with dots:
 
 results:
-    https://www.dropbox.com/s/s1pgpq9kxxr8qwc/transparent.png
+    https://www.dropbox.com/s/ccj16ktlsgfcspn/Transparent_t.png
 
 Future additions
 ----------------
